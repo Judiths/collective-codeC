@@ -13,8 +13,8 @@ int cmp(const void *a, const void *b)
     return(*(int *)a-*(int *)b);
 }
 typedef struct _thread_data_t {
-    int tid;	// 每個進程的ID
-    int *array;   // 动态分配每个进程中的数组
+    int tid;	// 每個线程的ID
+    int *array;   // 动态分配每个线程中的数组
     int count;	//动态数组中元素的个数	
 } thread_data_t;
 
@@ -24,18 +24,18 @@ int *shared_array;		// 共享輸入數組
 int shared_count;		// 共享动态数组的索引数
 
 /* declare the lock and constant variable of critical section in each threads */
-pthread_mutex_t lock_tid;		// 為每個進程上鎖
+pthread_mutex_t lock_tid;		// 為每個线程上鎖
 pthread_mutex_t lock_count;
 pthread_cond_t cond_tid;		
 pthread_cond_t cond_count;		
 
-/*　以進程ID作為輸入參數, 在进程中进行qsort()排序　*/
+/*　以线程ID作為輸入參數, 在线程中进行qsort()排序　*/
 void *thr_func0(void *arg) {
     thread_data_t *data = (thread_data_t *)arg;
 
     /* get mutex before modifying and printing shared_index */
     pthread_mutex_lock(&lock_tid);
-    shared_tid = data->tid;				// 共享進程ID
+    shared_tid = data->tid;				// 共享线程ID
     
     pthread_mutex_lock(&lock_count);
     shared_count = data->count; /*printf("shared_count: %d\n",shared_count);*/
@@ -43,7 +43,7 @@ void *thr_func0(void *arg) {
     
 //    printf("\n------- thread [%d] communication. ---------\n",shared_tid);
     for(int item = 0; item < shared_count; item++) {
-        shared_array[item] = data->array[item];		//共享進程數組數據
+        shared_array[item] = data->array[item];		//共享线程數組數據
     }
     /* use the function qsort() to sort the local array */
     qsort(shared_array, shared_count, sizeof(shared_array[0]), cmp);
@@ -94,14 +94,14 @@ int main(int argc, char **argv) {
     /* initialize pthread mutex protecting "shared_tid" */
     pthread_mutex_init(&lock_tid, NULL);
     pthread_cond_init(&cond_tid, NULL);
-    pthread_mutex_init(&lock_count, NULL);		// 初始化lock_count，使每个进程能够读出正确的thr_data[i].count值
+    pthread_mutex_init(&lock_count, NULL);		// 初始化lock_count，使每个线程能够读出正确的thr_data[i].count值
 
     /* create threads and make the threads to do things like the function 'thr_func()' do */
     for (j = 0; j < K; ++j) {
         thr_data[j].tid = j;
 	thr_data[j].count = count0;
 	thr_data[j].array = (int*)calloc(N,sizeof(int));	//动态分配数组
-        for(k = j*NoofItems; k < (j+1)*NoofItems; k++) {		//将input[N]中的元素动态分配到每个进程中去
+        for(k = j*NoofItems; k < (j+1)*NoofItems; k++) {		//将input[N]中的元素动态分配到每个线程中去
             thr_data[j].array[k%NoofItems] = input[k];
 	    count0 ++;
 	    thr_data[j].array[count0-1] = thr_data[j].array[k%NoofItems];
