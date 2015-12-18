@@ -1,3 +1,5 @@
+// compile with commandline: $gcc -g -Wall -o sampleSort_multiThread sampleSort_multiThread.c -lpthread
+// run with commandline:     $./sampleSort_multiThread 10000 10 data1.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
