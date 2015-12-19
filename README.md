@@ -1,5 +1,16 @@
 # collective-codeC
-Some C code is reoriganized
+Sample Sort implemented by multiple threads and MPI
+1. sampleSort_multiThread.c
+ Compile with 
+          $gcc -g -Wall -o s_multiThr sampleSort_multiThread.c -lpthread
+ Run with   
+          $./s_multiThr 10000 10 data1.dat
 
-1. There are two main sample sorting C code. Although it can give your right result, there'are some problems exist. For example, the samplSort_multiThread.c programming has a big latency because of the code "sleep()". To implement the synchronization among threads, I used the "mutex" method, but I couldn't give a better performance... If you have a better implementation based on my code, please commit me. Thanks a lot!
-2. 
+2. samleSort_MPI.c
+ Compile with 
+          $mpicc -g -Wall -o sampleSort_mpi sampleSort_MPI.c
+ Run with
+          $mpiexec.hydra -f /home/zer0/hostfile -n [number of processes] ./sampleSort_mpi [number of Items] [filename]
+    e.g   $mpiexec.hydra -f /home/zer0/hostfile -n 10 ./sampleSort 10000 data1.dat
+          
+
